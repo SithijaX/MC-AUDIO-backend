@@ -37,6 +37,14 @@ app.use((req, res, next) => {
 }
 );
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ message: "Internal Server Error" });
+});
+
+
+
 mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("MongoDB connected successfully 😘");
