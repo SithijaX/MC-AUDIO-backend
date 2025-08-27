@@ -46,7 +46,7 @@ app.use((err, req, res, next) => {
 
 
 
-mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.mongoURL)
   .then(() => {
     console.log("MongoDB connected successfully 😘");
   })
