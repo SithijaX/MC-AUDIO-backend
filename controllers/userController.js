@@ -160,9 +160,6 @@ export async function deleteUser(req, res) {
 }
 
 
-
-
-
 export async function isAdmin(req,res) {
   if(req.user.role !== 'admin') {
     return false;
