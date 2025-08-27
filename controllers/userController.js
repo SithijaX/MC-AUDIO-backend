@@ -125,6 +125,43 @@ export async function updateUser(req, res) {
 }
 
 
+export async function deleteUser(req, res) {
+  try {
+    const { email } = req.params;
+
+    const isUserAdmin = await isAdmin(req);
+    const isSameUser = req.user.email === email;
+
+    // Only admins or the user themselves can delete
+    if (!isUserAdmin && !isSameUser) {
+      return res.status(403).json({
+        message: "You are not allowed to delete this user 😒 !"
+      });
+    }
+
+    // Optional: prevent admins from deleting themselves
+    if (isUserAdmin && isSameUser) {
+      return res.status(403).json({
+        message: "Admins cannot delete their own account 😎 !"
+      });
+    }
+
+    const deletedUser = await User.findOneAndDelete({ email });
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found 🚫" });
+    }
+
+    res.status(200).json({ message: "User deleted successfully 👤👍" });
+  } catch (error) {
+    console.error("Delete User Error:", error.message);
+    res.status(500).json({ message: "Error deleting user 🚫" });
+  }
+}
+
+
+
+
 
 export async function isAdmin(req,res) {
   if(req.user.role !== 'admin') {
