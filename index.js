@@ -30,7 +30,9 @@ app.use((req, res, next) => {
       console.log(req.user);
       next();
     })
-  } else {
+  } 
+  else 
+    {
     next();
   }
 
