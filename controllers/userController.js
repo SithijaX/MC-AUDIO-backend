@@ -59,3 +59,77 @@ export async function userLogin(req, res) {
         res.status(500).json({ message: "🚫 Login failed!", error: error.message });
     }
 }
+
+
+export async function userList(req,res) {
+  try {
+    if(!(await isAdmin(req,res))) {
+        return res.status(403).json({ message: "Access denied. Admins only." });
+    }
+
+    const users = await User.find();
+    res.status(200).json({ users });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users 🚫"});
+  }
+}
+
+
+export async function updateUser(req, res) {
+  try {
+    const { email } = req.params;
+    const updates = req.body;
+
+    // Only allow admins OR the actual user to update
+    const isUserAdmin = await isAdmin(req);
+    if (!(isUserAdmin || req.user.email === email)) {
+      return res.status(403).json({ message: "Access denied." });
+    }
+
+    // Whitelist fields to prevent privilege escalation
+    const allowedFields = ["firstName", "lastName", "password", "profileImage", "email"];
+    const safeUpdates = {};
+    for (const key of allowedFields) {
+      if (updates[key] !== undefined) {
+        safeUpdates[key] = updates[key];
+      }
+    }
+
+    // 🔑 If password is being updated, hash it before saving
+    if (safeUpdates.password) {
+      const salt = await bcrypt.genSalt(10);
+      safeUpdates.password = await bcrypt.hash(safeUpdates.password, salt);
+    }
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      safeUpdates,
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found 🚫" });
+    }
+
+    // 🚫 Never send password back in response
+    const { password, ...userWithoutPassword } = user.toObject();
+
+    res.status(200).json({
+      message: "User updated successfully 👤👍",
+      user: userWithoutPassword
+    });
+  } catch (error) {
+    console.error("Update User Error:", error.message);
+    res.status(500).json({ message: "Error updating user 🚫" });
+  }
+}
+
+
+
+export async function isAdmin(req,res) {
+  if(req.user.role !== 'admin') {
+    return false;
+  }
+  return true;
+}
+

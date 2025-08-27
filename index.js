@@ -10,39 +10,38 @@ app.use(express.json());
 
 
 
-//token checking middleware
 app.use((req, res, next) => {
   let token = req.header("Authorization");
 
   if (token) {
-    token = token.replace("Bearer", "");
-    console.log(token);
 
-    jwt.verify(token, process.env.jwtSecret, (err, decode) => {
-      if(err) {
-        console.log(decoded);
+    token = token.replace("Bearer ", "").trim();
+
+    jwt.verify(token, process.env.jwtSecret, (err, decoded) => {
+      if (err) {
+        console.error("JWT Error:", err.message);
         return res.status(401).json({
-          message : "Unauthorized access! "
-        })
+          message: "Unauthorized access! Invalid or expired token."
+        });
       }
 
+      // Attach decoded user info to request
       req.user = decoded;
-      console.log(req.user);
+      console.log("Authenticated User:", req.user);
+
       next();
-    })
-  } 
-  else 
-    {
+    });
+  } else {
+    // No token
     next();
   }
+});
 
-}
-);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: error.message });
 });
 
 
