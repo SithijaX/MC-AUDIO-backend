@@ -18,11 +18,11 @@ mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopolo
 
 
   //import userRoutes
-  import userRouter from "./routes/userRouter";
+  import userRouter from "./routes/userRouter.js";
 
 
   //Routing
-  app.use("/api/users", userRouter);
+  app.use("/api/user", userRouter);
 
 app.listen(process.env.port, () => {
   console.log(`Server is running on port ${process.env.port} 😎`);
