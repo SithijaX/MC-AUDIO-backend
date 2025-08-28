@@ -163,9 +163,17 @@ export async function deleteUser(req, res) {
 
 export async function isAdmin(req) {
 
-  if(req.user.role === 'admin') {
+  if(req.user.role === "admin") {
     return true;
   }
   return false;
 }
+
+export function isLoggedIn(req, res, next) {
+    if (!req.user) {
+        return res.status(401).json({ message: "Please login to continue 🚫" });
+    }
+    next();
+}
+
 
