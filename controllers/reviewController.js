@@ -1,5 +1,4 @@
 import Review from "../models/review.js";
-import { isAdmin, isLoggedIn } from "./userController.js";
 
 //add reviews
 export async function addReview(req,res) {
@@ -114,36 +113,52 @@ export async function editReview(req, res) {
     }
 }
 
-//approve review
-export async function approveReviews(req,res) {
+
+export async function approveReviews(req, res) {
     try {
+        // Check login
         if (!req.user) {
             return res.status(403).json({ message: "Please login and try again! 🚫" });
         }
 
-
-
+        // Check admin role
         if (req.user.role !== "admin") {
-            return res.status(403).json({message: "You are not allowed to approve reviews 🤨🚫"});
+            return res.status(403).json({ message: "You are not allowed to approve reviews 🤨🚫" });
         }
 
-        const {email} = req.params;
+        const { email } = req.params;
 
+        // Validate email param
+        if (!email) {
+            return res.status(400).json({ message: "Email is required to approve a review 😕" });
+        }
+
+        // Check if review exists
+        const reviewExists = await Review.findOne({ email });
+        if (!reviewExists) {
+            return res.status(404).json({ message: "Review not found! 😢" });
+        }
+
+        // Approve review
         const approvedReview = await Review.findOneAndUpdate(
-                { email },
-                { isApproved: true },
-                { new: true }
-            );
+            { email },
+            { isApproved: true },
+            { new: true }
+        );
 
-        if (!approveReviews) {
-            return res.status(500).json({message: "there was an error while approving!"})
-        }
-            return res.status(200).json({ message: "Review approved successfully!" });
-
-        } catch (err) {
-            return res.status(500).json({ message: err.message });
+        if (!approvedReview) {
+            return res.status(500).json({ message: "There was an error while approving the review 🚫" });
         }
 
+        return res.status(200).json({
+            message: "Review approved successfully ✅",
+            review: approvedReview
+        });
+
+    } catch (err) {
+        console.error("Error approving review:", err);
+        return res.status(500).json({ message: "Internal server error 🚫" });
+    }
 }
 
 
