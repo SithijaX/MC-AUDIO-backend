@@ -1,6 +1,6 @@
 import Review from "../models/review.js";
 
-//add reviews
+
 export async function addReview(req,res) {
     if(!(req.user)) {
         return res.status(401).json({message: "Please login and continue! "});
@@ -40,7 +40,7 @@ export async function addReview(req,res) {
     }
 }
 
-//view reviews
+
 export async function viewReviews(req,res) {
 
     try {
@@ -65,7 +65,7 @@ export async function viewReviews(req,res) {
     } 
 }
 
-//edit reviews
+
 export async function editReview(req, res) {
     try {
         if (!req.user) {
