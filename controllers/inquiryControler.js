@@ -61,13 +61,18 @@ export async function giveResForInquiry(req, res) {
   }
 
   try {
-    const { response } = req.body; // make sure client sends { "response": "..." }
-    const id = Number(req.params.id); // cast id to number since DB stores it as number
+    const { response } = req.body;
+    const id = Number(req.params.id);
 
     const replyingInquiry = await Inquiry.findOneAndUpdate(
       { id },
-      { $set: { response } }, // explicit field update
-      { new: true }           // return the updated document
+      { 
+        $set: { 
+          response, 
+          respondedDate: new Date()   // ✅ set timestamp
+        } 
+      },
+      { new: true }   // return updated doc
     );
 
     if (!replyingInquiry) {
@@ -82,3 +87,4 @@ export async function giveResForInquiry(req, res) {
     res.status(500).json({ message: error.message });
   }
 }
+
