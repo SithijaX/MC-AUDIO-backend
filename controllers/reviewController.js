@@ -4,6 +4,16 @@ export async function addReview(req,res) {
     if(!(req.user)) {
         return res.status(401).json({message: "Please login and continue! "});
     }
+
+    // 1. Check if user already posted a review
+    const existingReview = await Review.findOne({ email: req.user.email });
+    if (existingReview) {
+        return res.status(400).json({
+            message: "You have already posted a review. Only one review is allowed!"
+        });
+    }
+
+    
     try {
 
         const data = req.body;

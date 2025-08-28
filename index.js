@@ -65,7 +65,7 @@ mongoose.connect(process.env.mongoURL)
   //Routing
   app.use("/api/user", userRouter);
   app.use("/api/item", itemRouter);
-  app.use("api/review", reviewRouter);
+  app.use("/api/review", reviewRouter);
 
 app.listen(process.env.port, () => {
   console.log(`Server is running on port ${process.env.port} 😎`);
