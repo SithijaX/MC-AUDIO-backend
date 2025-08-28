@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 
 
-//toen checking middleware
+//token checking middleware
 app.use((req, res, next) => {
   let token = req.header("Authorization");
 
@@ -59,11 +59,13 @@ mongoose.connect(process.env.mongoURL)
   //import Routes
   import userRouter from "./routes/userRouter.js";
   import itemRouter from "./routes/itemRouter.js";
+  import reviewRouter from "./routes/reviewRouter.js";
 
 
   //Routing
   app.use("/api/user", userRouter);
   app.use("/api/item", itemRouter);
+  app.use("api/review", reviewRouter);
 
 app.listen(process.env.port, () => {
   console.log(`Server is running on port ${process.env.port} 😎`);
