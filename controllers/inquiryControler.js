@@ -12,6 +12,7 @@ export async function addInquiry(req,res) {
 
         data.email = req.user.email;
         data.phone = req.user.phone;
+        data.response = "";
         data.id = id;
 
         const newInquiry = new Inquiry (data);
@@ -27,5 +28,25 @@ export async function addInquiry(req,res) {
         }
         catch (error) {
             res.status(500).json({message: error.message});
+    }
+}
+
+export async function viewInquiries(req,res) {
+    if(!req.user) {
+        return res.status(403).json({message: "Plase login and try again!"});
+    }  
+
+    if(!(req.user.role === "admin")) {
+        return res.status(403).json({message: "Admins only!"});
+    }
+
+    try {
+        const inquiries = await Inquiry.find().sort({date: -1});
+
+        res.status(200).json({
+        message: "Inquiries fetched successfully",inquiries,});
+    } 
+    catch(error) {
+        res.status(500).json({message: error.message});
     }
 }

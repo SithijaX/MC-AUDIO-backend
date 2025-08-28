@@ -60,12 +60,14 @@ mongoose.connect(process.env.mongoURL)
   import userRouter from "./routes/userRouter.js";
   import itemRouter from "./routes/itemRouter.js";
   import reviewRouter from "./routes/reviewRouter.js";
+  import inquiryRouter from "./routes/inquiryRouter.js";
 
 
   //Routing
   app.use("/api/user", userRouter);
   app.use("/api/item", itemRouter);
   app.use("/api/review", reviewRouter);
+  app.use("/api/inquiry", inquiryRouter);
 
 app.listen(process.env.port, () => {
   console.log(`Server is running on port ${process.env.port} 😎`);

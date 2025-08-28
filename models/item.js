@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 
 const itemSchema = new mongoose.Schema({
-    itemCode : {type: String, require: true, unique: true},
-    itemName : {type: String, require: true},
-    itemPic  : {type: String, require: true, default:"" },
-    rentPrice: {type: Number, require: true, default: 0},
-    category : {type: String, require: true, default:"other", enum:["audio", "light", "other"]},
-    availability: { type: Boolean, require: true, default: true }
+    itemCode    : {type: String, require: true, unique: true},
+    itemName    : {type: String, require: true},
+    itemPic     : {type: String, require: true, default:"" },
+    rentPrice   : {type: Number, require: true, default: 0},
+    description : {type: String, require: true, default:"" },
+    category    : {type: String, require: true, default:"other", enum:["audio", "light", "other"]},
+    availability: {type: Boolean, require: true, default: true }
 
 });
 
