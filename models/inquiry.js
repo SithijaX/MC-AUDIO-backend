@@ -7,7 +7,7 @@ const inquirySchema = new mongoose.Schema({
     message     :   { type: String, required: true },
     createdDate :   { type: Date, required: true, default: Date.now },
     response    :   { type: String,required: false,default: "" },
-    responedDate:   { type: String, required: false}
+    responedDate:   { type: Date, required: false}
 });
 
 const Inquiry = new mongoose.model("Inquiry", inquirySchema);

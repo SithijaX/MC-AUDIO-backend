@@ -50,3 +50,35 @@ export async function viewInquiries(req,res) {
         res.status(500).json({message: error.message});
     }
 }
+
+export async function giveResForInquiry(req, res) {
+  if (!req.user) {
+    return res.status(403).json({ message: "Please log in and try again!" });
+  }
+
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Admins only!" });
+  }
+
+  try {
+    const { response } = req.body; // make sure client sends { "response": "..." }
+    const id = Number(req.params.id); // cast id to number since DB stores it as number
+
+    const replyingInquiry = await Inquiry.findOneAndUpdate(
+      { id },
+      { $set: { response } }, // explicit field update
+      { new: true }           // return the updated document
+    );
+
+    if (!replyingInquiry) {
+      return res.status(404).json({ message: "Inquiry not found" });
+    }
+
+    res.status(200).json({
+      message: "Response added successfully 👍",
+      inquiry: replyingInquiry,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
