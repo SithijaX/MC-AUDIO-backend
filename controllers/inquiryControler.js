@@ -88,3 +88,32 @@ export async function giveResForInquiry(req, res) {
   }
 }
 
+export async function deleteInquiry(req, res) {
+  if (!req.user) {
+    return res.status(403).json({ message: "Please log in and try again!" });
+  }
+
+  try {
+    const idNum = Number(req.params.id);
+
+    const deletingInq = await Inquiry.findOne({ id: idNum });
+    if (!deletingInq) {
+      return res.status(404).json({ message: "Inquiry not found!" });
+    }
+
+    // Only admin or the owner (matching email) can delete
+    if (req.user.role !== "admin" && req.user.email !== deletingInq.email) {
+      return res.status(403).json({ message: "You are not allowed to delete inquiries!" });
+    }
+
+    const deletedInquiry = await Inquiry.findOneAndDelete({ id: idNum });
+
+    return res.status(200).json({
+      message: "Inquiry deleted successfully 👍",
+      deletedInquiry,
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
